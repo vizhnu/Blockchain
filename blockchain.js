@@ -12,6 +12,36 @@ class Blockchain{
 
         return block;
     }
+
+    isValidChain(chain){
+        if(JSON.stringify(chain[0])  !== JSON.stringify(Block.genesis())){
+            console.log("Genesis block does not match");
+            return false;
+        }
+        for(let i=1;i < chain.length; i++){
+            const block = chain[i];
+            const lastBlock = chain[i-1];
+
+            if(block.lastHash !== lastBlock.hash ||
+                block.hash !== Block.blockHash(block)){
+                    return false;
+                }
+        }
+
+        return true;
+    }
+
+    replaceChain(newChain){
+        if(newChain.length <= this.chain.length){
+            console.log('new chain not longer than current chain');
+            return;
+        }
+        else if(!this.isValidChain(newChain)){
+            console.log('chain not valid');
+            return;
+        }
+        this.chain = newChain;
+    }
 }
 
 module.exports = Blockchain;

@@ -31,6 +31,11 @@ class Block{
 
         return new Block(timestamp, lastHash, hash, data);
     }
+
+    static blockHash(block){
+        const ipString = `${block.timestamp}${block.lastHash}${block.data}`;
+        return SHA256(ipString).toString();
+    }
 }
 
 module.exports = Block;
