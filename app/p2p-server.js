@@ -20,7 +20,10 @@ class P2pServer{
     }
     connectSocket(socket){
         this.sockets.push(socket);
-        console.log(`socket ${socket.toString()} connected`);
+
+        this.messageHandler(socket);
+
+        this.sendChain(socket);
     }
 
     connectToPeers(){
@@ -29,6 +32,21 @@ class P2pServer{
             socket.on('open', () => this.connectSocket(socket));
         });
 
+    }
+
+    sendChain(socket){
+        socket.send(JSON.stringify(this.blockchain.chain));
+    }
+
+    messageHandler(socket){
+        socket.on('message', message => {
+            const data = JSON.parse(message);
+            this.blockchain.replaceChain(data);
+        });
+    }
+
+    syncChains(){
+        this.sockets.forEach((socket) => this.sendChain(socket));
     }
 }
 
